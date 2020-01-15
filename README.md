@@ -1,2 +1,1 @@
-# soft-touch
-webgl brushes
+# webgl drawing pad experiment
