@@ -3,9 +3,9 @@ setupOverlay();
 
 let pixelRatio = Math.min(window.devicePixelRatio, 2);
 const regl = require("regl")({
-  pixelRatio,
-  extensions: ["OES_texture_float"],
-  optionalExtensions: ["oes_texture_float_linear"]
+  pixelRatio
+  // extensions: ["OES_texture_float"],
+  // optionalExtensions: ["oes_texture_float_linear"]
 });
 
 let shaders = require("./src/pack.shader.js");
@@ -25,16 +25,16 @@ shaders.on("change", () => {
   overlay && overlay.parentNode.removeChild(overlay);
 });
 
-// const fbo = regl.framebuffer({
-//   color: regl.texture({
-//     width: 1,
-//     height: 1,
-//     wrap: "clamp"
-//   }),
-//   depth: true
-// });
+const fbo = regl.framebuffer({
+  color: regl.texture({
+    width: 1,
+    height: 1,
+    wrap: "clamp"
+  }),
+  depth: true
+});
 
-const fbo = regl.framebuffer({ colorType: "float", colorFormat: "rgba" });
+// const fbo = regl.framebuffer({ colorType: "float", colorFormat: "rgba" });
 
 const drawFboBlurred = regl({
   frag: () => postShaders.fragment,

@@ -28,12 +28,12 @@ void main() {
   float aspectRatio = resolution.x / resolution.y;
   vec2 vUv = uv * 0.5 + vec2(0.5);
 
-  float radius = 0.01;
+  float radius = 1. / 250.;
   vec2 p = vUv - point.xy;
 
   p.x *= aspectRatio;
 
-  vec3 splat = exp(-dot(p, p) / radius) * vec3(1.0);
+  vec3 splat = exp(-dot(p, p) / radius) * vec3(0.7);
   vec3 base = texture2D(backBuffer, vUv).xyz;
   gl_FragColor = vec4(splat + base * 0.99, 1.0);
 
