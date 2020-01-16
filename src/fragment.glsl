@@ -33,9 +33,9 @@ void main() {
 
   p.x *= aspectRatio;
 
-  vec3 splat = exp(-dot(p, p) / radius) * vec3(0.7);
+  vec3 splat = exp(-dot(p, p) / radius) * vec3(0.2);
   vec3 base = texture2D(backBuffer, vUv).xyz;
-  gl_FragColor = vec4(splat + base * 0.99, 1.0);
+  gl_FragColor = vec4(splat + base * 1.0, 1.0);
 
   //    vec2 p = vUv - point.xy;
   // // vec2 pos = squareFrame(resolution);
