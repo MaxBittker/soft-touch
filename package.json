@@ -17,6 +17,7 @@
     "getusermedia": "^2.0.1",
     "gh-pages": "^1.1.0",
     "glsl-color": "^0.0.1",
+    "glsl-dither": "^1.0.1",
     "glsl-fractal-brownian-noise": "^1.1.0",
     "glsl-hsv2rgb": "^1.0.0",
     "glsl-luma": "^1.0.1",

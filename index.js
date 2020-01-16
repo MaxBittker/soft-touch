@@ -1,23 +1,22 @@
 const { setupOverlay } = require("regl-shader-error-overlay");
 setupOverlay();
 
-function downloadURI(uri, filename) {
-  var link = document.createElement("a");
-  link.download = filename;
-  link.href = uri;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
+let pixelRatio = Math.min(window.devicePixelRatio, 2);
 const regl = require("regl")({
-  pixelRatio: Math.min(window.devicePixelRatio, 2)
+  pixelRatio,
+  extensions: ["OES_texture_float"],
+  optionalExtensions: ["oes_texture_float_linear"]
 });
 
 let shaders = require("./src/pack.shader.js");
+let postShaders = require("./src/post.shader.js");
+let setupHandlers = require("./src/touch.js");
+
 let vert = shaders.vertex;
 let frag = shaders.fragment;
 
+let getPointers = setupHandlers(regl._gl.canvas, pixelRatio);
+pointers = getPointers();
 shaders.on("change", () => {
   console.log("update");
   vert = shaders.vertex;
@@ -26,12 +25,53 @@ shaders.on("change", () => {
   overlay && overlay.parentNode.removeChild(overlay);
 });
 
+// const fbo = regl.framebuffer({
+//   color: regl.texture({
+//     width: 1,
+//     height: 1,
+//     wrap: "clamp"
+//   }),
+//   depth: true
+// });
+
+const fbo = regl.framebuffer({ colorType: "float", colorFormat: "rgba" });
+
+const drawFboBlurred = regl({
+  frag: () => postShaders.fragment,
+  vert: () => postShaders.vertex,
+
+  attributes: {
+    position: [-4, -4, 4, -4, 0, 4]
+  },
+  uniforms: {
+    tex: ({ count }) => fbo,
+    resolution: ({ viewportWidth, viewportHeight }) => [
+      viewportWidth,
+      viewportHeight
+    ],
+    wRcp: ({ viewportWidth }) => 1.0 / viewportWidth,
+    hRcp: ({ viewportHeight }) => 1.0 / viewportHeight,
+    pixelRatio
+  },
+  depth: { enable: false },
+  count: 3
+});
+
 const lastFrame = regl.texture();
 
+// let lastPointer(){
+
+// }
 let drawTriangle = regl({
+  framebuffer: fbo,
+
   uniforms: {
     // Becomes `uniform float t`  and `uniform vec2 resolution` in the shader.
     t: ({ tick }) => tick,
+    point: (context, props) => [
+      props.pointer.texcoordX,
+      props.pointer.texcoordY
+    ],
     resolution: ({ viewportWidth, viewportHeight }) => [
       viewportWidth,
       viewportHeight
@@ -53,12 +93,35 @@ let drawTriangle = regl({
   count: 3
 });
 
-regl.frame(function(context) {
-  regl.clear({
-    color: [0, 0, 0, 1]
+regl.frame(function({ viewportWidth, viewportHeight, tick }) {
+  fbo.resize(viewportWidth, viewportHeight);
+  // console.log(tick);
+
+  fbo.use(() => {
+    regl.clear({
+      color: [0, 0, 0, 1],
+      depth: 1
+    });
+    // console.log(pointers);
+    pointers.forEach(pointer => {
+      if (pointer.down) {
+        pointer.moved = false;
+        // console.log(pointer.id);
+        // let pointer = pointers[pointers.length - 1];
+        drawTriangle({ pointer });
+        lastFrame({
+          copy: true
+        });
+      }
+    });
+    drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 } });
+    lastFrame({
+      copy: true
+    });
   });
-  drawTriangle();
-  lastFrame({
-    copy: true
-  });
+  // regl.clear({
+  //   color: [0, 0, 0, 1]
+  // });
+  drawFboBlurred();
+  // drawTriangle();
 });
