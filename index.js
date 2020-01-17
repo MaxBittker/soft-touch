@@ -1,7 +1,7 @@
 const { setupOverlay } = require("regl-shader-error-overlay");
 setupOverlay();
 
-let pixelRatio = Math.min(window.devicePixelRatio, 2);
+let pixelRatio = Math.min(window.devicePixelRatio, 1.5);
 const regl = require("regl")({
   pixelRatio
   // extensions: ["OES_texture_float"],
@@ -68,6 +68,7 @@ let drawTriangle = regl({
   uniforms: {
     // Becomes `uniform float t`  and `uniform vec2 resolution` in the shader.
     t: ({ tick }) => tick,
+    force: regl.prop("force"),
     point: (context, props) => [
       props.pointer.texcoordX,
       props.pointer.texcoordY
@@ -108,13 +109,14 @@ regl.frame(function({ viewportWidth, viewportHeight, tick }) {
         pointer.moved = false;
         // console.log(pointer.id);
         // let pointer = pointers[pointers.length - 1];
-        drawTriangle({ pointer });
+        drawTriangle({ pointer, force: pointer.force || 0.5 });
+        // console.log(pointer.force);
         lastFrame({
           copy: true
         });
       }
     });
-    drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 } });
+    drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 }, force: 0.0 });
     lastFrame({
       copy: true
     });
