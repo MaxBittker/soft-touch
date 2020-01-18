@@ -10,5 +10,5 @@ module.exports = require("shader-reload")({
     uv = 0.5 * (position + 1.0);
     gl_Position = vec4(position, 0, 1);
   }`,
-  fragment: glslify(path.resolve(__dirname, "fragment_post.glsl"))
+  fragment: glslify(path.resolve(__dirname, "fragment_post_skin.glsl"))
 });

@@ -44,6 +44,7 @@ const drawFboBlurred = regl({
     position: [-4, -4, 4, -4, 0, 4]
   },
   uniforms: {
+    t: ({ tick }) => tick,
     tex: ({ count }) => fbo,
     resolution: ({ viewportWidth, viewportHeight }) => [
       viewportWidth,

@@ -30,7 +30,7 @@ void main() {
   vec2 pixel = vec2(1.0) / resolution;
   vec2 vUv = uv * 0.5 + vec2(0.5);
 
-  float radius = (force + 0.3) / 300.;
+  float radius = (force + 0.3) / 200.;
   vec2 p = vUv - point.xy;
 
   p.x *= aspectRatio;
@@ -44,26 +44,29 @@ void main() {
   vec3 drip = texture2D(backBuffer, vUv + vec2(0., pixel.y)).xyz;
   vec3 below = texture2D(backBuffer, vUv - vec2(0., pixel.y)).xyz;
 
-  float n = 0.9 + noise(vec3(vUv * 100., t * 0.0)) * 0.05;
+  float n = 0.9 + noise(vec3(vUv * 50., t * 0.05)) * 0.05;
   float dripmap = noise(vec3(vUv.xy * vec2(50.0, 1.0), t * 0.000));
   //  > 0.9;
-  if (length(drip) + length(base) > 1.7) {
-    if (dripmap < 0.5) {
-      drip *= 0.0;
-    } else {
-      drip *= 0.993;
-      // if (length(base) > 1.3) {
-      // base *= 0.995;
-      // }
-    }
-    if (length(drip) > length(below)) {
-      base *= 0.995;
-    }
-  } else {
-    drip *= 0.;
-  }
+  // if (length(drip) + length(base) > 1.7) {
+  //   if (dripmap < 0.5) {
+  //     drip *= 0.0;
+  //   } else {
+  //     drip *= 0.993;
+  //     // if (length(base) > 1.3) {
+  //     // base *= 0.995;
+  //     // }
+  //   }
+  //   if (length(drip) > length(below)) {
+  //     base *= 0.995;
+  //   }
+  // } else {
+  //   drip *= 0.;
+  // }
 
-  gl_FragColor = vec4(splat * n + max(base * 1.0, drip), 1.0);
+  // gl_FragColor = vec4(splat * n + max(base * 0.999, drip), 1.0);
+  float fn = 0.99 + noise(vec3(vUv * 100., t * 0.1)) * 0.01;
+
+  gl_FragColor = vec4(splat * n + base * fn, 1.0);
   // if (dripmap > 0.6) {
   // gl_FragColor.r = 1.0;
   // }
