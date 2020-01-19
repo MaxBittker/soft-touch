@@ -119,6 +119,8 @@ regl.frame(function({ viewportWidth, viewportHeight, tick }) {
     drawTriangle({ pointer, force: pointer.force || 0.5 });
     densityDoubleFBO.swap();
   });
+  drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 }, force: 0.0 });
+  densityDoubleFBO.swap();
 
   drawFboBlurred();
 });

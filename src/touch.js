@@ -16,7 +16,7 @@ function setupHandlers(canvas, pixelRatio) {
     this.down = false;
     this.moved = false;
     this.color = [30, 0, 300];
-    this.force = 1.0;
+    this.force = 0.5;
   }
   let pointers = [];
   pointers.push(new pointerPrototype());
@@ -24,7 +24,7 @@ function setupHandlers(canvas, pixelRatio) {
   let mx = 0;
   let my = 0;
 
-  function updatePointerDownData(pointer, id, posX, posY, force = 1.0) {
+  function updatePointerDownData(pointer, id, posX, posY, force = 0.5) {
     pointer.id = id;
     pointer.down = true;
     pointer.moved = false;
@@ -42,7 +42,7 @@ function setupHandlers(canvas, pixelRatio) {
     pointer.down = false;
   }
 
-  function updatePointerMoveData(pointer, posX, posY, force = 1.0) {
+  function updatePointerMoveData(pointer, posX, posY, force = 0.5) {
     pointer.prevTexcoordX = pointer.texcoordX;
     pointer.prevTexcoordY = pointer.texcoordY;
     pointer.texcoordX = posX / canvas.width;
