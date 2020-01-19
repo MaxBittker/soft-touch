@@ -125,19 +125,21 @@ void main() {
 
       + 0.6 + ((sin((t * 0.01) + c.z * 0.4) + 0.2) * 0.5);
   dilation = 2.5 - input_color.r * 3.5;
+  // dilation = input_color.r * 2.5;
 
   // dilation *= 1.0 -length(pos);
   // dilation = 1.0 - abs(length(webcamColor - col));
   // dilation += 1.0;
   float dd = (c.y - c.x) * (1.0 - c.x * 1.0);
   dd *= dilation;
-  dd *= 2.5;
-  col = hsv2rgb(vec3(0.9, 0.8 - (dilation * 0.2) - c.x * 0.2, 0.7));
+  dd *= 1.5;
+  float a = 1.0;
+  col = hsv2rgb(vec3(0.8, 0.9 - (dilation * 0.1) - c.x * 0.2, 0.7));
   if (c.z < 1.2) {
-    col = hsv2rgb(vec3(0.5, 0.8 - dilation * 0.2, 0.6));
+    col = hsv2rgb(vec3(0.0, 0.9 - dilation * 0.1, 0.6));
   }
   if (c.z < 0.7) {
-    col = hsv2rgb(vec3(0.7, 0.8 - dilation * 0.2, 0.95));
+    col = hsv2rgb(vec3(0.6, 0.9 - dilation * 0.1, 0.95));
   }
   // if
   if (dd > 0.4 || c.x < 0.05) {
@@ -145,6 +147,7 @@ void main() {
   } else {
     // color += col * 0.03;
     color = vec3(0.8, 0.7, 0.9);
+    a = dd * 3.;
   }
   // color = (c.y - c.x) * col;
   // vec3 cel = cellular(pos * 5.);
@@ -201,5 +204,6 @@ void main() {
   // color = vec3(1.);
   // color *= 0.25;
   // }
-  gl_FragColor = vec4(color, 1.0);
+  gl_FragColor = vec4(color, a);
+  // gl_FragColor = vec4(0.0);
 }

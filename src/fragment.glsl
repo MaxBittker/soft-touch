@@ -64,7 +64,7 @@ void main() {
   // }
 
   // gl_FragColor = vec4(splat * n + max(base * 0.999, drip), 1.0);
-  float fn = 0.99 + noise(vec3(vUv * 100., t * 0.1)) * 0.01;
+  float fn = 0.997 + noise(vec3(vUv * 100., t * 0.9)) * 0.02;
 
   gl_FragColor = vec4(splat * n + base * fn, 1.0);
   // if (dripmap > 0.6) {

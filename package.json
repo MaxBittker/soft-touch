@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/shader-reload-cli index.js:bundle.js --dir dist/ --cors",
+    "start": "./node_modules/.bin/shader-reload-cli index.js:bundle.js --dir docs/ --cors",
     "build": "./node_modules/.bin/browserify -t glslify -g uglifyify index.js -o docs/bundle.js"
   },
   "author": "maxbittker <maxbittker@gmail.com> (maxbittker.github.io)",
