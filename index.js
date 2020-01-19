@@ -3,9 +3,13 @@ setupOverlay();
 
 let pixelRatio = Math.min(window.devicePixelRatio, 1.5);
 const regl = require("regl")({
-  pixelRatio
+  pixelRatio,
   // extensions: ["OES_texture_float"],
-  // optionalExtensions: ["oes_texture_float_linear"]
+  optionalExtensions: [
+    // "oes_texture_float_linear"
+    // "WEBGL_debug_renderer_info",
+    // "WEBGL_debug_shaders"
+  ]
 });
 
 let shaders = require("./src/pack.shader.js");
@@ -25,16 +29,30 @@ shaders.on("change", () => {
   overlay && overlay.parentNode.removeChild(overlay);
 });
 
-const fbo = regl.framebuffer({
-  color: regl.texture({
-    width: 1,
-    height: 1,
-    wrap: "clamp"
-  }),
-  depth: true
-});
+function createDoubleFBO() {
+  let fbo1 = regl.framebuffer();
+  let fbo2 = regl.framebuffer();
 
-// const fbo = regl.framebuffer({ colorType: "float", colorFormat: "rgba" });
+  return {
+    resize(w, h) {
+      fbo1.resize(w, h);
+      fbo2.resize(w, h);
+    },
+    get read() {
+      return fbo1;
+    },
+    get write() {
+      return fbo2;
+    },
+    swap() {
+      let temp = fbo1;
+      fbo1 = fbo2;
+      fbo2 = temp;
+    }
+  };
+}
+
+const densityDoubleFBO = createDoubleFBO();
 
 const drawFboBlurred = regl({
   frag: () => postShaders.fragment,
@@ -45,7 +63,7 @@ const drawFboBlurred = regl({
   },
   uniforms: {
     t: ({ tick }) => tick,
-    tex: ({ count }) => fbo,
+    tex: ({ count }) => densityDoubleFBO.read,
     resolution: ({ viewportWidth, viewportHeight }) => [
       viewportWidth,
       viewportHeight
@@ -58,16 +76,10 @@ const drawFboBlurred = regl({
   count: 3
 });
 
-const lastFrame = regl.texture();
-
-// let lastPointer(){
-
-// }
 let drawTriangle = regl({
-  framebuffer: fbo,
+  framebuffer: () => densityDoubleFBO.write,
 
   uniforms: {
-    // Becomes `uniform float t`  and `uniform vec2 resolution` in the shader.
     t: ({ tick }) => tick,
     force: regl.prop("force"),
     point: (context, props) => [
@@ -78,53 +90,35 @@ let drawTriangle = regl({
       viewportWidth,
       viewportHeight
     ],
-    backBuffer: lastFrame
+    backBuffer: () => densityDoubleFBO.read
   },
 
   frag: () => shaders.fragment,
   vert: () => shaders.vertex,
   attributes: {
-    // Full screen triangle
     position: [
       [-1, 4],
       [-1, -1],
       [4, -1]
     ]
   },
-  // Our triangle has 3 vertices
+  depth: { enable: false },
+
   count: 3
 });
 
 regl.frame(function({ viewportWidth, viewportHeight, tick }) {
-  fbo.resize(viewportWidth, viewportHeight);
-  // console.log(tick);
+  densityDoubleFBO.resize(viewportWidth, viewportHeight);
 
-  fbo.use(() => {
-    regl.clear({
-      color: [0, 0, 0, 1],
-      depth: 1
-    });
-    // console.log(pointers);
-    pointers.forEach(pointer => {
-      if (pointer.down) {
-        pointer.moved = false;
-        // console.log(pointer.id);
-        // let pointer = pointers[pointers.length - 1];
-        drawTriangle({ pointer, force: pointer.force || 0.5 });
-        // console.log(pointer.force);
-        lastFrame({
-          copy: true
-        });
-      }
-    });
-    drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 }, force: 0.0 });
-    lastFrame({
-      copy: true
-    });
+  pointers.forEach(pointer => {
+    if (!pointer.down) {
+      return;
+    }
+    pointer.moved = false;
+    // console.log(pointer.id);
+    drawTriangle({ pointer, force: pointer.force || 0.5 });
+    densityDoubleFBO.swap();
   });
-  // regl.clear({
-  //   color: [0, 0, 0, 1]
-  // });
+
   drawFboBlurred();
-  // drawTriangle();
 });

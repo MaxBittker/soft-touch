@@ -64,9 +64,9 @@ void main() {
   // }
 
   // gl_FragColor = vec4(splat * n + max(base * 0.999, drip), 1.0);
-  float fn = 0.997 + noise(vec3(vUv * 100., t * 0.9)) * 0.02;
+  // float fn = 0.997 + noise(vec3(vUv * 100., t * 0.9)) * 0.02;
 
-  gl_FragColor = vec4(splat * n + base * fn, 1.0);
+  gl_FragColor = vec4(splat * n + base, 1.0);
   // if (dripmap > 0.6) {
   // gl_FragColor.r = 1.0;
   // }
@@ -85,5 +85,5 @@ void main() {
 
   // vec3 color = max(paint, prev * 0.99);
 
-  // gl_FragColor = vec4(color, 1.0);
+  // gl_FragColor = vec4(vec3(0.5, 0.8, 0.4) + base * 0.7, 1.0);
 }
