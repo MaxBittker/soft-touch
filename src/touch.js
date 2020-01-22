@@ -43,12 +43,12 @@ function setupHandlers(canvas, pixelRatio) {
   }
 
   function updatePointerMoveData(pointer, posX, posY, force = 0.5) {
-    pointer.prevTexcoordX = pointer.texcoordX;
-    pointer.prevTexcoordY = pointer.texcoordY;
+    // pointer.prevTexcoordX = pointer.texcoordX;
+    // pointer.prevTexcoordY = pointer.texcoordY;
     pointer.texcoordX = posX / canvas.width;
     pointer.texcoordY = 1.0 - posY / canvas.height;
-    pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX);
-    pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY);
+    // pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX);
+    // pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY);
     pointer.moved =
       Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
     pointer.force = force;

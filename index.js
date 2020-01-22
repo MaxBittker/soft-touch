@@ -86,6 +86,10 @@ let drawTriangle = regl({
       props.pointer.texcoordX,
       props.pointer.texcoordY
     ],
+    prevPoint: (context, props) => [
+      props.pointer.prevTexcoordX,
+      props.pointer.prevTexcoordY
+    ],
     resolution: ({ viewportWidth, viewportHeight }) => [
       viewportWidth,
       viewportHeight
@@ -114,9 +118,12 @@ regl.frame(function({ viewportWidth, viewportHeight, tick }) {
     if (!pointer.down) {
       return;
     }
+    // console.log(pointer);
     pointer.moved = false;
     // console.log(pointer.id);
     drawTriangle({ pointer, force: pointer.force || 0.5 });
+    pointer.prevTexcoordX = pointer.texcoordX;
+    pointer.prevTexcoordY = pointer.texcoordY;
     densityDoubleFBO.swap();
   });
   drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 }, force: 0.0 });

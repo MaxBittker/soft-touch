@@ -18,6 +18,6 @@ void main() {
   vec4 color = texture2D(tex, uv);
 
   // gl_FragColor = vec4(1.0, 0., 1.0, 1.0);
-  gl_FragColor = dither(gl_FragCoord.xy, color);
-  // gl_FragColor = color;
+  // gl_FragColor = dither(gl_FragCoord.xy, color);
+  gl_FragColor = color;
 }

@@ -3,6 +3,7 @@ uniform float t;
 uniform vec2 resolution;
 uniform sampler2D backBuffer;
 uniform vec2 point;
+uniform vec2 prevPoint;
 // uniform float aspectRatio;
 uniform float force;
 // uniform float radius;
@@ -25,9 +26,14 @@ varying vec2 uv;
 // clang-format on
 #define PI 3.14159265359
 
+float sdSegment(in vec2 p, in vec2 a, in vec2 b, in float R) {
+  float h = min(1.0, max(0.0, dot(p - a, b - a) / dot(b - a, b - a)));
+  return length(p - a - (b - a) * h) - R;
+}
 void main() {
   float aspectRatio = resolution.x / resolution.y;
   vec2 pixel = vec2(1.0) / resolution;
+  vec2 scale = vec2(aspectRatio, 1.0);
   vec2 vUv = uv * 0.5 + vec2(0.5);
 
   float radius = (force + 0.2) / 300.;
@@ -35,7 +41,20 @@ void main() {
 
   p.x *= aspectRatio;
 
-  vec3 splat = exp(-dot(p, p) / radius) * vec3(0.1);
+  // vec3 splat = exp(-dot(p, p) / radius) * vec3(0.1);
+
+  float seg = sdSegment(vUv * scale, point.xy * scale, prevPoint.xy * scale,
+                        pixel.x * 20.);
+  // seg = abs(seg);
+
+  // seg = exp(-dot(seg, seg) / radius);
+  // seg = 1.0 - seg;
+
+  vec3 splat = vec3(0.0);
+  if (seg < 0.) {
+    splat = vec3(1.0);
+  }
+  //  * seg;
   // exp(-dot(p, p) / radius) * vec3(0.1);
   vec3 base = texture2D(backBuffer, vUv).xyz;
 
@@ -44,50 +63,12 @@ void main() {
 
   float n = 0.9 + noise(vec3(vUv * 50., t * 0.05)) * 0.05;
   float dripmap = noise(vec3(vUv.xy * vec2(50.0, 1.0), t * 0.000));
-  //  > 0.9;
-  // if (length(drip) + length(base) > 1.7) {
-  //   if (dripmap < 0.5) {
-  //     drip *= 0.0;
-  //   } else {
-  //     drip *= 0.993;
-  //     // if (length(base) > 1.3) {
-  //     // base *= 0.995;
-  //     // }
-  //   }
-  //   if (length(drip) > length(below)) {
-  //     base *= 0.995;
-  //   }
-  // } else {
-  //   drip *= 0.;
-  // }
 
-  // gl_FragColor = vec4(splat * n + max(base * 0.999, drip), 1.0);
-  float fn = 0.99;
-  // fn -= abs(sin(t * 20.)) * 0.02;
-  // if (noise(vec3((vUv + vec2(t * 0.1)) * 50., t * 0.3)) > -0.5) {
-  fn = 1.0;
-  // }
-  // if (base < 0.1) {
-  // }
+  float fn = 0.999;
+  // fn = 1.0;
 
-  gl_FragColor = vec4(splat * n + base * fn, 1.0);
-  // if (dripmap > 0.6) {
-  // gl_FragColor.r = 1.0;
-  // }
-  //    vec2 p = vUv - point.xy;
-  // // vec2 pos = squareFrame(resolution);
-  // // vec2 textCoord = uv * 0.5 + vec2(0.5);
-
-  // float a = t * 0.01;
-  // vec2 loc = point;
-  // float d = 0.2 - length(loc - pos);
-  // d = max(d, 0.);
-  // d = pow(d, 0.22);
-  // vec3 paint = vec3(d);
-
-  // vec3 prev = texture2D(backBuffer, textCoord).rgb * 1.0;
-
-  // vec3 color = max(paint, prev * 0.99);
-
-  // gl_FragColor = vec4(vec3(0.5, 0.8, 0.4) + base * 0.7, 1.0);
+  float fill = (1.0 - luma(base)) * luma(splat) * n;
+  gl_FragColor = vec4(base * fn + fill * vec3(1.0), 1.0);
+  // gl_FragColor =
+  // vec4(vec3(1.0) * , 1.0);
 }
