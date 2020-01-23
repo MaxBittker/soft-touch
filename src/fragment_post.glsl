@@ -9,15 +9,15 @@ uniform vec2 resolution;
 
 // clang-format off
 // #pragma glslify: dither = require(glsl-dither)
-#pragma glslify: dither = require(glsl-dither/8x8)
+// #pragma glslify: dither = require(glsl-dither/8x8)
 // #pragma glslify: dither = require(glsl-dither/4x4)
-// #pragma glslify: dither = require(glsl-dither/2x2)
+#pragma glslify: dither = require(glsl-dither/2x2)
 // clang-format on
 
 void main() {
   vec4 color = texture2D(tex, uv);
 
   // gl_FragColor = vec4(1.0, 0., 1.0, 1.0);
-  // gl_FragColor = dither(gl_FragCoord.xy, color);
-  gl_FragColor = color;
+  gl_FragColor = dither(gl_FragCoord.xy, color);
+  // gl_FragColor = color;
 }

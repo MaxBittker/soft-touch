@@ -126,7 +126,15 @@ regl.frame(function({ viewportWidth, viewportHeight, tick }) {
     pointer.prevTexcoordY = pointer.texcoordY;
     densityDoubleFBO.swap();
   });
-  drawTriangle({ pointer: { texcoordX: -9, texcoordY: -9 }, force: 0.0 });
+  drawTriangle({
+    pointer: {
+      texcoordX: -9,
+      texcoordY: -9,
+      prevTexcoordX: -10,
+      prevTexcoordY: -10
+    },
+    force: 0.0
+  });
   densityDoubleFBO.swap();
 
   drawFboBlurred();

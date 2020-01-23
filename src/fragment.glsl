@@ -44,16 +44,16 @@ void main() {
   // vec3 splat = exp(-dot(p, p) / radius) * vec3(0.1);
 
   float seg = sdSegment(vUv * scale, point.xy * scale, prevPoint.xy * scale,
-                        pixel.x * 20.);
-  // seg = abs(seg);
+                        pixel.x * 20. * (0.1 + force * 0.4));
+  // seg = 0.001;
 
-  // seg = exp(-dot(seg, seg) / radius);
-  // seg = 1.0 - seg;
-
-  vec3 splat = vec3(0.0);
-  if (seg < 0.) {
-    splat = vec3(1.0);
-  }
+  // seg = exp(-dot(seg, seg) / r/adius);
+  seg = 1.0 - (200. * seg);
+  seg = max(0., seg);
+  vec3 splat = vec3(1.0) * seg;
+  // if (seg < 0.) {
+  // splat = vec3(1.0);
+  // }
   //  * seg;
   // exp(-dot(p, p) / radius) * vec3(0.1);
   vec3 base = texture2D(backBuffer, vUv).xyz;
@@ -61,14 +61,13 @@ void main() {
   vec3 drip = texture2D(backBuffer, vUv + vec2(0., pixel.y)).xyz;
   vec3 below = texture2D(backBuffer, vUv - vec2(0., pixel.y)).xyz;
 
-  float n = 0.9 + noise(vec3(vUv * 50., t * 0.05)) * 0.05;
+  float n = 0.8 + noise(vec3(vUv * 500., t * 0.05)) * 0.2;
   float dripmap = noise(vec3(vUv.xy * vec2(50.0, 1.0), t * 0.000));
 
   float fn = 0.999;
   // fn = 1.0;
 
-  float fill = (1.0 - luma(base)) * luma(splat) * n;
+  float fill = (1.0 - luma(base)) * luma(splat) * n * 0.7;
   gl_FragColor = vec4(base * fn + fill * vec3(1.0), 1.0);
-  // gl_FragColor =
-  // vec4(vec3(1.0) * , 1.0);
+  // gl_FragColor = vec4(base + vec3(1.0) * seg, 1.0);
 }

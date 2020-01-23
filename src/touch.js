@@ -21,9 +21,6 @@ function setupHandlers(canvas, pixelRatio) {
   let pointers = [];
   pointers.push(new pointerPrototype());
 
-  let mx = 0;
-  let my = 0;
-
   function updatePointerDownData(pointer, id, posX, posY, force = 0.5) {
     pointer.id = id;
     pointer.down = true;
@@ -99,7 +96,7 @@ function setupHandlers(canvas, pixelRatio) {
         touches[i].identifier,
         posX,
         posY,
-        touches[i].force
+        touches[i].force || 0.01
       );
     }
   });
