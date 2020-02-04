@@ -17,6 +17,7 @@ function setupHandlers(canvas, pixelRatio) {
     this.moved = false;
     this.color = [30, 0, 300];
     this.force = 0.5;
+    this.missed = 0;
   }
   let pointers = [];
   pointers.push(new pointerPrototype());
@@ -112,7 +113,7 @@ function setupHandlers(canvas, pixelRatio) {
         let posX = scaleByPixelRatio(touches[i].pageX);
         let posY = scaleByPixelRatio(touches[i].pageY);
         // console.log(touches[i].force);
-
+        pointer.missed += 1;
         updatePointerMoveData(pointer, posX, posY, touches[i].force);
       }
     },

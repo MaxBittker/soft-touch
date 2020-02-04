@@ -44,7 +44,7 @@ void main() {
   // vec3 splat = exp(-dot(p, p) / radius) * vec3(0.1);
 
   float seg = sdSegment(vUv * scale, point.xy * scale, prevPoint.xy * scale,
-                        pixel.x * 20. * (0.1 + force * 0.4));
+                        pixel.x * 30. * (0.1 + force * 0.4));
   // seg = 0.001;
 
   // seg = exp(-dot(seg, seg) / r/adius);
@@ -67,7 +67,7 @@ void main() {
   float fn = 0.999;
   // fn = 1.0;
 
-  float fill = (1.0 - luma(base)) * luma(splat) * n * 0.7;
+  float fill = (1.0 - luma(base)) * luma(splat) * n * 0.5;
   gl_FragColor = vec4(base * fn + fill * vec3(1.0), 1.0);
   // gl_FragColor = vec4(base + vec3(1.0) * seg, 1.0);
 }

@@ -120,6 +120,10 @@ regl.frame(function({ viewportWidth, viewportHeight, tick }) {
     }
     // console.log(pointer);
     pointer.moved = false;
+    if (pointer.missed > 1) {
+      console.log(pointer.missed);
+    }
+    pointer.missed = 0;
     // console.log(pointer.id);
     drawTriangle({ pointer, force: pointer.force || 0.5 });
     pointer.prevTexcoordX = pointer.texcoordX;
