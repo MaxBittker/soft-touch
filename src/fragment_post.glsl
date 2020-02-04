@@ -103,9 +103,11 @@ void main() {
   }
 
   vec3 cout = c + vec3(0.0, 0.0, 0.3) * clr.x;
+  vec3 fout = f + vec3(0.0, 0.0, 0.3) * clr.x;
   gl_FragColor = vec4(cout, 1.0);
+  gl_FragColor = vec4(f * vec3(1.0), 1.0);
   // gl_FragColor = vec4(r.x, r.y, r.y, 1.0);
-  // gl_FragColor = vec4(f, f, f, 1.0) * vec3(clr);
+  // gl_FragColor = vec4(fout, 1.0);
   // gl_FragColor = clr;
 }
 // void main() {

@@ -36,7 +36,7 @@ void main() {
   vec2 scale = vec2(aspectRatio, 1.0);
   vec2 vUv = uv * 0.5 + vec2(0.5);
 
-  float radius = (force + 0.2) / 300.;
+  float radius = (force * 0.8 + 0.3) / 300.;
   vec2 p = vUv - point.xy;
 
   p.x *= aspectRatio;
@@ -64,11 +64,14 @@ void main() {
   float n = 0.8 + noise(vec3(vUv * 500., t * 0.05)) * 0.2;
   float dripmap = noise(vec3(vUv.xy * vec2(50.0, 1.0), t * 0.000));
 
-  float fn = 0.999;
+  float fn = 1.0;
+  // if (length(base) < 0.37) {
+  // base *= 0.4;
+  // }
   // fn = 1.0;
   float splatf = luma(splat);
   float basef = luma(base);
-  float fill = (1.0 - luma(base)) * luma(splat) * n * 0.5;
+  float fill = (1.0 - luma(base)) * luma(splat) * n * 0.7;
   gl_FragColor = vec4(base * fn + fill * vec3(1.0), 1.0);
   // gl_FragColor =
   // vec4((vec3(1.0) - base) * splat + ((vec3(1.0) - splat) * base), 1.0);
