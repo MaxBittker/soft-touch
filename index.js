@@ -19,7 +19,8 @@ let setupHandlers = require("./src/touch.js");
 let vert = shaders.vertex;
 let frag = shaders.fragment;
 
-let getPointers = setupHandlers(regl._gl.canvas, pixelRatio);
+let { getPointers, processQueue } = setupHandlers(regl._gl.canvas, pixelRatio);
+// console.log(getPointers);
 pointers = getPointers();
 shaders.on("change", () => {
   console.log("update");
@@ -114,22 +115,19 @@ let drawTriangle = regl({
 regl.frame(function({ viewportWidth, viewportHeight, tick }) {
   densityDoubleFBO.resize(viewportWidth, viewportHeight);
 
-  pointers.forEach(pointer => {
-    if (!pointer.down) {
-      return;
-    }
-    // console.log(pointer);
-    pointer.moved = false;
-    if (pointer.missed > 1) {
-      console.log(pointer.missed);
-    }
-    pointer.missed = 0;
-    // console.log(pointer.id);
-    drawTriangle({ pointer, force: pointer.force || 0.5 });
-    pointer.prevTexcoordX = pointer.texcoordX;
-    pointer.prevTexcoordY = pointer.texcoordY;
-    densityDoubleFBO.swap();
-  });
+  do {
+    pointers.forEach(pointer => {
+      if (!pointer.down) {
+        return;
+      }
+      pointer.moved = false;
+      drawTriangle({ pointer, force: pointer.force || 0.5 });
+      pointer.prevTexcoordX = pointer.texcoordX;
+      pointer.prevTexcoordY = pointer.texcoordY;
+      densityDoubleFBO.swap();
+    });
+  } while (processQueue() > 0);
+
   drawTriangle({
     pointer: {
       texcoordX: -9,

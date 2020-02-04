@@ -108,7 +108,7 @@ void main() {
   gl_FragColor = vec4(f * vec3(1.0), 1.0);
   // gl_FragColor = vec4(r.x, r.y, r.y, 1.0);
   // gl_FragColor = vec4(fout, 1.0);
-  // gl_FragColor = clr;
+  // gl_FragColor = vec4(vec3(clr.x), 1.0);
 }
 // void main() {
 //   vec4 color = texture2D(tex, uv);

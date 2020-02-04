@@ -44,7 +44,7 @@ void main() {
   // vec3 splat = exp(-dot(p, p) / radius) * vec3(0.1);
 
   float seg = sdSegment(vUv * scale, point.xy * scale, prevPoint.xy * scale,
-                        pixel.x * 30. * (0.1 + force * 0.4));
+                        0.05 * (0.1 + force * 0.4));
   // seg = 0.001;
 
   // seg = exp(-dot(seg, seg) / r/adius);

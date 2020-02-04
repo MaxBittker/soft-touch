@@ -20,6 +20,7 @@ function setupHandlers(canvas, pixelRatio) {
     this.missed = 0;
   }
   let pointers = [];
+  let eventQueue = [];
   pointers.push(new pointerPrototype());
 
   function updatePointerDownData(pointer, id, posX, posY, force = 0.5) {
@@ -39,8 +40,20 @@ function setupHandlers(canvas, pixelRatio) {
   function updatePointerUpData(pointer) {
     pointer.down = false;
   }
+  function queuePointerMoveData(pointerId, posX, posY, force = 0.5) {
+    eventQueue.push({ pointerId, posX, posY, force });
+  }
+  function processQueue() {
+    if (eventQueue.length == 0) {
+      return 0;
+    }
+    let data = eventQueue.shift();
+    updatePointerMoveData(data);
+    return eventQueue.length;
+  }
 
-  function updatePointerMoveData(pointer, posX, posY, force = 0.5) {
+  function updatePointerMoveData({ pointerId, posX, posY, force = 0.5 }) {
+    let pointer = pointers.find(p => p.id == pointerId);
     // pointer.prevTexcoordX = pointer.texcoordX;
     // pointer.prevTexcoordY = pointer.texcoordY;
     pointer.texcoordX = posX / canvas.width;
@@ -76,7 +89,7 @@ function setupHandlers(canvas, pixelRatio) {
     if (!pointer.down) return;
     let posX = scaleByPixelRatio(e.offsetX);
     let posY = scaleByPixelRatio(e.offsetY);
-    updatePointerMoveData(pointer, posX, posY);
+    queuePointerMoveData(pointer.id, posX, posY);
   });
 
   window.addEventListener("mouseup", () => {
@@ -113,8 +126,9 @@ function setupHandlers(canvas, pixelRatio) {
         let posX = scaleByPixelRatio(touches[i].pageX);
         let posY = scaleByPixelRatio(touches[i].pageY);
         // console.log(touches[i].force);
-        pointer.missed += 1;
-        updatePointerMoveData(pointer, posX, posY, touches[i].force);
+        // pointer.missed += 1;
+        queuePointerMoveData(pointer.id, posX, posY, touches[i].force);
+        // updatePointerMoveData(pointer.id, posX, posY, touches[i].force);
       }
     },
     false
@@ -134,9 +148,12 @@ function setupHandlers(canvas, pixelRatio) {
     // if (e.key === " ") splatStack.push(parseInt(Math.random() * 20) + 5);
   });
 
-  return () => {
-    console.log(pointers);
-    return pointers;
+  return {
+    getPointers: () => {
+      console.log(pointers);
+      return pointers;
+    },
+    processQueue
   };
 }
 
