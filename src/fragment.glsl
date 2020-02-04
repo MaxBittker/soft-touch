@@ -66,8 +66,11 @@ void main() {
 
   float fn = 0.999;
   // fn = 1.0;
-
+  float splatf = luma(splat);
+  float basef = luma(base);
   float fill = (1.0 - luma(base)) * luma(splat) * n * 0.5;
   gl_FragColor = vec4(base * fn + fill * vec3(1.0), 1.0);
+  // gl_FragColor =
+  // vec4((vec3(1.0) - base) * splat + ((vec3(1.0) - splat) * base), 1.0);
   // gl_FragColor = vec4(base + vec3(1.0) * seg, 1.0);
 }
