@@ -1,6 +1,18 @@
 // courtesy to PavelDoGreat/WebGL-Fluid-Simulation.
+let undo = document.getElementById("undo");
+function setupHandlers(canvas, pixelRatio, pushState, popState) {
+  undo.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    popState();
+  });
+  undo.addEventListener("mouseup", e => {
+    e.stopPropagation();
+  });
+  undo.addEventListener("touchend", e => {
+    e.stopPropagation();
+  });
 
-function setupHandlers(canvas, pixelRatio) {
   function scaleByPixelRatio(input) {
     return Math.floor(input * pixelRatio);
   }
@@ -94,6 +106,7 @@ function setupHandlers(canvas, pixelRatio) {
 
   window.addEventListener("mouseup", () => {
     updatePointerUpData(pointers[0]);
+    pushState();
   });
 
   canvas.addEventListener("touchstart", e => {
@@ -141,11 +154,12 @@ function setupHandlers(canvas, pixelRatio) {
       if (pointer == null) continue;
       updatePointerUpData(pointer);
     }
-  });
+    let nDown = pointers.filter(p => p.down).length;
 
-  window.addEventListener("keydown", e => {
-    // if (e.code === "KeyP") config.PAUSED = !config.PAUSED;
-    // if (e.key === " ") splatStack.push(parseInt(Math.random() * 20) + 5);
+    if (nDown == 0) {
+      console.log("touchend");
+      pushState();
+    }
   });
 
   return {
